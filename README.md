@@ -37,7 +37,7 @@ $(VIGEMCLIENT_SDK)\lib\x64\ViGEmClient.lib
 4. Ensure DS4Windows exposes the desired controller through XInput.
 5. Run the wrapper before launching USC.
 
-The program currently selects the first available XInput controller. It creates one virtual Xbox 360 controller and continuously updates the virtual left and right stick X axes.
+The program prefers the first available XInput controller. If no XInput controller is available, it falls back to the first attached DirectInput game controller, using the common DualShock 4 layout. It creates one virtual Xbox 360 controller and continuously updates the virtual left and right stick X axes.
 
 ## USC binding
 
@@ -53,7 +53,9 @@ The physical controller itself should not be selected as USC's input device if t
 ## Current limitations
 
 - The implementation currently supports XInput input first; DirectInput enumeration and controller selection are not yet included.
-- It selects the first connected XInput controller.
+- It selects the first connected XInput controller, or the first attached DirectInput game controller when XInput is unavailable.
+- DirectInput currently assumes the DualShock 4 layout: left stick `lX/lY` and right stick `lZ/lRz`. Other DirectInput drivers may expose different axis assignments.
+- DirectInput button and trigger states are not currently mirrored into the virtual controller.
 - The angular mapping has a wraparound at the `-pi/pi` boundary. Moving across the negative-X direction can jump from one axis extreme to the other because a bounded joystick axis cannot represent unlimited turns.
 - The center deadzone outputs zero because the stick angle is undefined near the origin.
 - The output is an absolute angle mapping, not an accumulated relative knob rotation.
@@ -61,7 +63,7 @@ The physical controller itself should not be selected as USC's input device if t
 
 ## Future improvements
 
-- Add DirectInput input support and a controller-selection menu.
+- Add DirectInput controller selection and configurable axis assignments.
 - Add configurable deadzone, inversion, axis assignment, and sensitivity.
 - Add angle unwrapping or relative rotation mode if USC's knob behavior requires continuous turning across the wrap boundary.
 - Add a calibration screen for center, stick range, and direction.

@@ -26,8 +26,8 @@ The folder is not currently initialized as a Git repository. No ViGEmClient subm
 
 `main.cpp` currently:
 
-1. Finds the first available XInput controller.
-2. Reads the left and right stick vectors.
+1. Finds the first available XInput controller, or falls back to the first attached DirectInput game controller.
+2. Reads the left and right stick vectors. The DirectInput fallback assumes the common DualShock 4 `lX/lY` and `lZ/lRz` layout.
 3. Applies a `0.15` deadzone.
 4. Computes each stick angle with `atan2(Y, X)`.
 5. Maps the angle from `[-pi, pi]` to the normal signed XInput axis range.
@@ -92,8 +92,10 @@ Do not assume that installing ViGEmBus alone fixes the C++ build.
 
 ### Software conditions
 
-- XInput is the only input path currently implemented.
+- XInput is preferred; DirectInput fallback is implemented for the common DualShock 4 axis layout.
 - The first available XInput controller is selected automatically.
+- The first attached DirectInput game controller is selected automatically when XInput is unavailable.
+- DirectInput button and trigger mirroring is not implemented yet.
 - DirectInput enumeration, controller selection, calibration, inversion, and configurable sensitivity are not implemented.
 - The stick center has no meaningful angle, so values inside the deadzone output zero.
 - The bounded axis mapping wraps at the negative-X direction.
@@ -114,7 +116,7 @@ Do not assume that installing ViGEmBus alone fixes the C++ build.
 ### Planned software improvements
 
 - Add an explicit controller-selection menu.
-- Add DirectInput support if XInput/DS4Windows is insufficient.
+- Add DirectInput controller selection, configurable axis assignments, and button/trigger mirroring.
 - Add calibration and configurable deadzone/inversion/sensitivity.
 - Add absolute-angle and relative/unwrapped knob modes.
 - Add controller reconnect handling and visible axis diagnostics.
