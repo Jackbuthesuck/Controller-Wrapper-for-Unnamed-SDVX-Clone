@@ -1,9 +1,13 @@
 # USC Controller Wrapper
 
+See [INPUT_CONTRACT.md](INPUT_CONTRACT.md) for the USC laser input ranges, wrapped-axis behavior, deadzone, calibration math, and diagnostic output.
+
 A separate wrapper for USC (Unnamed SDVX Clone). It reads one physical XInput controller and exposes two virtual Xbox 360 stick axes through ViGEm:
 
-- Physical left stick angle -> virtual left-stick X (`Lx`) -> first knob.
-- Physical right stick angle -> virtual right-stick X (`Rx`) -> second knob.
+- Physical left-stick angle -> wrapped virtual left-stick X (`Lx`) -> first knob.
+- Physical right-stick angle -> wrapped virtual right-stick X (`Rx`) -> second knob.
+
+The inner stick region also acts as a spring-centered speed control: horizontal X deflection rotates the laser, while the outer ring uses the stick angle as the wrapped knob position.
 
 The physical stick coordinates are converted with:
 
@@ -12,7 +16,9 @@ theta = atan2(Y, X)
 axis = theta / pi
 ```
 
-The output range is `[-32768, 32767]`, which is the normal XInput axis range. A configurable-style deadzone is currently set to `0.15` in `main.cpp`.
+The output range is `[-32768, 32767]`, which is the normal XInput axis range. The wrapper reports a wrapped absolute phase like a commercial encoder controller. USC's normal controller mode calculates movement and handles the phase boundary. A controller deadzone with hysteresis is used near the stick center.
+
+In USC, set the laser input device to `Controller`, bind `Lx` and `Rx`, and leave `Controller_DirectMode = false`.
 
 ## Requirements
 
